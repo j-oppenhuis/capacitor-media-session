@@ -88,13 +88,14 @@ public class MediaSessionPlugin extends Plugin {
     }
 
     private void updateServiceMetadata() {
-        service.setTitle(title);
-        service.setArtist(artist);
-        service.setAlbum(album);
-        service.setArtwork(artwork);
-        service.update();
+        if (service != null) {
+            service.setTitle(title);
+            service.setArtist(artist);
+            service.setAlbum(album);
+            service.setArtwork(artwork);
+            service.update();
+        }
     }
-
 
     private Bitmap urlToBitmap(String url) throws IOException {
         final boolean blobUrl = url.startsWith("blob:");
@@ -136,20 +137,22 @@ public class MediaSessionPlugin extends Plugin {
             }
         }
 
-        if (service != null) { updateServiceMetadata(); };
+        if (service != null) { updateServiceMetadata(); }
         call.resolve();
     }
 
     private void updateServicePlaybackState() {
-        if (playbackState.equals("playing")) {
-            service.setPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-            service.update();
-        } else if (playbackState.equals("paused")) {
-            service.setPlaybackState(PlaybackStateCompat.STATE_PAUSED);
-            service.update();
-        } else {
-            service.setPlaybackState(PlaybackStateCompat.STATE_NONE);
-            service.update();
+        if (service != null) {
+            if (playbackState.equals("playing")) {
+                service.setPlaybackState(PlaybackStateCompat.STATE_PLAYING);
+                service.update();
+            } else if (playbackState.equals("paused")) {
+                service.setPlaybackState(PlaybackStateCompat.STATE_PAUSED);
+                service.update();
+            } else {
+                service.setPlaybackState(PlaybackStateCompat.STATE_NONE);
+                service.update();
+            }
         }
     }
 
@@ -170,11 +173,13 @@ public class MediaSessionPlugin extends Plugin {
     }
 
     private void updateServicePositionState() {
-        service.setDuration(Math.round(duration * 1000));
-        service.setPosition(Math.round(position * 1000));
-        float playbackSpeed = playbackRate == 0.0 ? (float) 1.0 : (float) playbackRate;
-        service.setPlaybackSpeed(playbackSpeed);
-        service.update();
+        if (service != null) {
+            service.setDuration(Math.round(duration * 1000));
+            service.setPosition(Math.round(position * 1000));
+            float playbackSpeed = playbackRate == 0.0 ? (float) 1.0 : (float) playbackRate;
+            service.setPlaybackSpeed(playbackSpeed);
+            service.update();
+        }
     }
 
     @PluginMethod
@@ -183,7 +188,7 @@ public class MediaSessionPlugin extends Plugin {
         position = call.getDouble("position", 0.0);
         playbackRate = call.getFloat("playbackRate", 1.0F);
 
-        if (service != null) { updateServicePositionState(); };
+        if (service != null) { updateServicePositionState(); }
         call.resolve();
     }
 
@@ -192,7 +197,7 @@ public class MediaSessionPlugin extends Plugin {
         call.setKeepAlive(true);
         actionHandlers.put(call.getString("action"), call);
 
-        if (service != null) { service.updatePossibleActions(); };
+        if (service != null) { service.updatePossibleActions(); }
     }
 
     public boolean hasActionHandler(String action) {
