@@ -51,8 +51,6 @@ var capacitorMediaSession = (function (exports, core) {
 
     exports.MediaSession = MediaSession;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
-
     return exports;
 
 })({}, capacitorExports);
